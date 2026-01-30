@@ -1,0 +1,10 @@
+.partners-logos img {
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .partners-logos img {
+        margin: 0;
+    }
+}
