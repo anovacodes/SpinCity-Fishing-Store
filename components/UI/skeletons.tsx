@@ -83,8 +83,18 @@ export const PartnersLogosSkeleton = () => {
 
 export const ProductSkeleton = () => {
     return (
-        <div className="md:py-[30px]">
+        <div className="md:pb-[30px]">
             <Container>
+                <div className="py-[24px]">
+                    <div className="flex items-center gap-x-10 gap-y-2 flex-wrap">
+                        <div className="w-8 h-[38px] bg-neutral-100 rounded-md"></div>
+                        <div className="w-32 h-[38px] bg-neutral-100 rounded-md"></div>
+                        <div className="w-32 h-[38px] bg-neutral-100 rounded-md"></div>
+                        <div className="w-32 h-[38px] bg-neutral-100 rounded-md"></div>
+                        <div className="w-32 h-[38px] bg-neutral-100 rounded-md"></div>
+                    </div>
+                </div>
+
                 <div className="h-[571px] grid grid-cols-1 lg:grid-cols-[42%_55%] justify-between gap-10 mb-20">
                     <div>
                         <div className="bg-neutral-100 h-[400px] rounded-xl mb-[10px]"></div>
