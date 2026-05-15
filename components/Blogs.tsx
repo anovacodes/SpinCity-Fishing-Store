@@ -64,7 +64,9 @@ const Blogs: FC<BlogsProps> = ({ articles = [], itemsPerPage, variables = {} }) 
                 })}
             </ul>
 
-            <LoadMoreButton items={articlesEdges} itemsPerPage={itemsPerPage} onClick={handleClick} />
+            {articlesEdges.length % itemsPerPage === 0 && articlesEdges.length > 0 && (
+                <LoadMoreButton onClick={handleClick} />
+            )}
         </>
     )
 }

@@ -89,6 +89,13 @@ const CollectionPage: FC<CollectionPageProps> = async ({ params, searchParams })
         allProductsFromCollectionVariable(slug, STORE_SETTINGS.productsFromCollectionCount, filterItems)
     )
 
+    const productsEdgesNext = await getProductsFromCollection(
+        productsFromCollectionQuery,
+        allProductsFromCollectionVariable(slug, STORE_SETTINGS.productsFromCollectionCount + 1, filterItems)
+    )
+
+    const hasNextItem = productsEdgesNext.length > productsEdges.length
+
     function handleVariantOption(name: string, data: string | Array<string>) {
         if (Array.isArray(data)) {
             data.forEach((item) => {
@@ -152,6 +159,7 @@ const CollectionPage: FC<CollectionPageProps> = async ({ params, searchParams })
                     <Sidebar collectionName={slug[0]} productsEdges={productsEdges} />
                     <Products
                         productsEdges={productsEdges}
+                        key={productsEdges.at(-1)?.node.id}
                         type="products-from-collection"
                         itemsPerPage={STORE_SETTINGS.productsFromCollectionCount}
                         variables={allProductsFromCollectionVariable(
@@ -160,6 +168,7 @@ const CollectionPage: FC<CollectionPageProps> = async ({ params, searchParams })
                             filterItems
                         )}
                         currentUser={currentUser}
+                        showButton={hasNextItem}
                     />
                 </div>
             </Container>
