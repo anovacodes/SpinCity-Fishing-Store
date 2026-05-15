@@ -12,7 +12,7 @@ import type { CurrentUser } from "@/actions/auth/getCurrentUser"
 import { ReviewsSummary } from "./ProductsSliderWrapper"
 import { getReviewsSummary } from "@/actions/prisma/getReviewsSummary"
 import { useSearchParams } from "next/navigation"
-import { isDev } from "@/config/settings.config"
+import { isDev, STORE_SETTINGS } from "@/config/settings.config"
 
 type ListType = "best-selling" | "products-from-collection" | "wishlist"
 
@@ -22,15 +22,24 @@ interface ProductsProps {
     type: ListType
     productsEdges: ProductsEdge[]
     currentUser?: CurrentUser
+    showButton?: boolean
 }
 
-const Products: FC<ProductsProps> = ({ productsEdges = [], type, variables = {}, itemsPerPage, currentUser }) => {
+const Products: FC<ProductsProps> = ({
+    productsEdges = [],
+    type,
+    variables = {},
+    itemsPerPage,
+    currentUser,
+    showButton = true
+}) => {
     const [products, setProducts] = useState<ProductsEdge[]>(productsEdges)
     const [reviewsSummary, setReviewsSummary] = useState<ReviewsSummary[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [cursor, setCursor] = useState("")
     const searchParams = useSearchParams()
     const previousSearchParams = useRef(searchParams.toString())
+    const [showLoadMoreButton, setShowLoadMoreButton] = useState(showButton)
 
     useEffect(() => {
         switch (type) {
@@ -85,6 +94,16 @@ const Products: FC<ProductsProps> = ({ productsEdges = [], type, variables = {},
                         after: cursor
                     })
 
+                    const edgesNext = await getProductsFromCollection(productsFromCollectionQuery, {
+                        ...variables,
+                        first: STORE_SETTINGS.productsFromCollectionCount,
+                        after: edges.at(-1)?.cursor
+                    })
+
+                    if (!edgesNext.length || !edges.length) {
+                        setShowLoadMoreButton(false)
+                    }
+
                     setProducts([...products, ...edges])
                 } else if (type === "best-selling") {
                     const edges = await getProducts(productsQuery, {
@@ -133,9 +152,10 @@ const Products: FC<ProductsProps> = ({ productsEdges = [], type, variables = {},
                 <EmptyState title="No products found :(" />
             )}
 
-            {type !== "wishlist" && (
-                <LoadMoreButton items={products} itemsPerPage={itemsPerPage} onClick={handleClick} />
-            )}
+            {type !== "wishlist" &&
+                showLoadMoreButton &&
+                products.length % itemsPerPage === 0 &&
+                products.length > 0 && <LoadMoreButton onClick={handleClick} />}
         </div>
     )
 }
